@@ -1,6 +1,6 @@
 <template>
   <div>
-    Login Page
+    Shopcart Page
   </div>
 </template>
 
@@ -10,9 +10,6 @@ export default {
 }
 </script>
 
-
-<style scoped>
-  div {
-    background-color: #eeeeee;
-  }
+<style lang="">
+  
 </style>

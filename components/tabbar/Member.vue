@@ -1,6 +1,6 @@
 <template>
   <div>
-    Register Page
+    Member Page
   </div>
 </template>
 
@@ -9,7 +9,6 @@ export default {
   
 }
 </script>
-
 
 <style lang="">
   

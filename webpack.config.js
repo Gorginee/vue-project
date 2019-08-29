@@ -27,7 +27,16 @@ module.exports = {
       { test: /\.(jpg|jpeg|png|gif|bmp)$/, use: 'file-loader'},
       { test: /\.(ttf|svg|woff|woff2|eot)$/, use: 'url-loader'},
       { test: /\.js$/, use: 'babel-loader', exclude: /node_modules/ },
-      { test: /\.vue$/, use: 'vue-loader' }
+      {
+        test: /\.vue$/,
+        loader: 'vue-loader',
+        options: {
+          loaders: {
+            scss: 'vue-style-loader!css-loader!sass-loader', // <style lang="scss">
+            sass: 'vue-style-loader!css-loader!sass-loader?indentedSyntax' // <style lang="sass">
+          }
+        }
+      }
     ]
   }
 }
