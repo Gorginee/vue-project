@@ -1,5 +1,11 @@
 <template>
   <div>
+    <!-- 小球动画 -->
+    <transition @before-enter="beforeEnter" @enter="enter" @after-enter="afterEnter">
+      <div class="ball" v-show="showBall" ref="ball"></div>
+    </transition>
+
+
     <!-- 轮播图 -->
     <div class="mui-card">
       <div class="mui-card-content">
@@ -20,10 +26,10 @@
             <span class="now">￥2199</span>
           </p>
           <span class="count">购买数量：</span>
-          <numberbox class="numberbox"></numberbox>
+          <numberbox :storage="storage" @getCount="getSelectedCount" class="numberbox"></numberbox>
           <div class="option">
             <mt-button type="primary" size="small">立即购买</mt-button>
-            <mt-button type="danger" size="small">加入购物车</mt-button>
+            <mt-button type="danger" size="small" @click="addToCart">加入购物车</mt-button>
           </div>
         </div>
       </div>
@@ -40,7 +46,7 @@
           </p>
           <p>
             库存情况：
-            <span>888件</span>
+            <span>{{ storage }}</span>
           </p>
           <p>
             上架时间：
@@ -67,7 +73,10 @@ import numberbox from "../common/numberbox.vue"
 export default {
   data() {
     return {
+      storage: 60,
+      selectedCount: 1,
       id: this.$route.params.id,
+      showBall: false,
       swipeItems: [
         {
           img:
@@ -93,6 +102,34 @@ export default {
     },
     goCommentPage (id) {
       this.$router.push({ name: 'goodscomment', params: { id } })
+    },
+    addToCart () {
+      this.showBall = !this.showBall
+      const goods = {
+        id: this.id,
+        count: this.selectedCount
+      }
+      this.$store.commit('addToCart', goods)
+    },
+    beforeEnter (el) {
+      el.style.transform = "translate(0, 0)"
+    },
+    enter (el, done) {
+      el.offsetWidth
+      const ballPosition = this.$refs.ball.getBoundingClientRect()
+      const badgePosition = document.getElementById('badge').getBoundingClientRect()
+      const xDistance = badgePosition.left - ballPosition.left
+      const yDistance = badgePosition.top - ballPosition.top
+      
+      el.style.transform = `translate(${xDistance}px, ${yDistance}px)`
+      el.style.transition = "all 0.7s cubic-bezier(.17,.67,.83,.67)"
+      done()
+    },
+    afterEnter (el) {
+      this.showBall = !this.showBall
+    },
+    getSelectedCount (val) {
+      this.selectedCount = val
     }
   },
   components: { swiper, numberbox }
@@ -125,5 +162,16 @@ export default {
 }
 .btn-div {
   margin: 8px;
+}
+.ball {
+  width: 20px;
+  height: 20px;
+  background-color: red;
+  border-radius: 50%;
+  position: absolute;
+  z-index: 99;
+  left: 170px;
+  top: 387px;
+
 }
 </style>
