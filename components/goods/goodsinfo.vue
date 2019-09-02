@@ -5,7 +5,6 @@
       <div class="ball" v-show="showBall" ref="ball"></div>
     </transition>
 
-
     <!-- 轮播图 -->
     <div class="mui-card">
       <div class="mui-card-content">
@@ -16,20 +15,20 @@
     </div>
 
     <div class="mui-card">
-      <div class="mui-card-header">OPPO Find X</div>
+      <div class="mui-card-header">{{ goodsInfo.title }}</div>
       <div class="mui-card-content">
         <div class="mui-card-content-inner">
           <p>
             市场价：
-            <span class="market-price">￥2999</span>&nbsp;&nbsp;
+            <span class="market-price">￥{{ goodsInfo.mPrice }}</span>&nbsp;&nbsp;
             销售价：
-            <span class="now">￥2199</span>
+            <span class="now">￥{{ goodsInfo.price }}</span>
           </p>
           <span class="count">购买数量：</span>
           <numberbox :storage="storage" @getCount="getSelectedCount" class="numberbox"></numberbox>
           <div class="option">
             <mt-button type="primary" size="small">立即购买</mt-button>
-            <mt-button type="danger" size="small" @click="addToCart">加入购物车</mt-button>
+            <mt-button type="danger" size="small" @click="addToCart(goodsInfo.id)">加入购物车</mt-button>
           </div>
         </div>
       </div>
@@ -46,7 +45,7 @@
           </p>
           <p>
             库存情况：
-            <span>{{ storage }}</span>
+            <span>{{ goodsInfo.storage }}</span>
           </p>
           <p>
             上架时间：
@@ -67,13 +66,17 @@
 
 
 <script>
-import swiper from "../common/swiper.vue"
-import numberbox from "../common/numberbox.vue"
+import swiper from "../common/swiper.vue";
+import numberbox from "../common/numberbox.vue";
 
 export default {
+  computed: {
+    goodsInfo() {
+      return this.$store.state.goodslist.find(item => item.id == this.id);
+    }
+  },
   data() {
     return {
-      storage: 60,
       selectedCount: 1,
       id: this.$route.params.id,
       showBall: false,
@@ -97,39 +100,46 @@ export default {
     };
   },
   methods: {
-    goDescPage (id) {
-      this.$router.push({ name: 'goodsdesc', params: { id } })
+    goDescPage(id) {
+      this.$router.push({ name: "goodsdesc", params: { id } });
     },
-    goCommentPage (id) {
-      this.$router.push({ name: 'goodscomment', params: { id } })
+    goCommentPage(id) {
+      this.$router.push({ name: "goodscomment", params: { id } });
     },
-    addToCart () {
-      this.showBall = !this.showBall
-      const goods = {
-        id: this.id,
-        count: this.selectedCount
-      }
-      this.$store.commit('addToCart', goods)
+    addToCart(goodsId) {
+      this.showBall = !this.showBall;
+      const goods = this.$store.state.goodslist.find(item => item.id == goodsId)
+      const order = {
+        id: parseInt(goodsId),
+        count: this.selectedCount,
+        title: goods.title,
+        selected: true,
+        price: goods.price,
+        img: goods.img
+      };
+      this.$store.commit("addToCart", order);
     },
-    beforeEnter (el) {
-      el.style.transform = "translate(0, 0)"
+    beforeEnter(el) {
+      el.style.transform = "translate(0, 0)";
     },
-    enter (el, done) {
-      el.offsetWidth
-      const ballPosition = this.$refs.ball.getBoundingClientRect()
-      const badgePosition = document.getElementById('badge').getBoundingClientRect()
-      const xDistance = badgePosition.left - ballPosition.left
-      const yDistance = badgePosition.top - ballPosition.top
-      
-      el.style.transform = `translate(${xDistance}px, ${yDistance}px)`
-      el.style.transition = "all 0.7s cubic-bezier(.17,.67,.83,.67)"
-      done()
+    enter(el, done) {
+      el.offsetWidth;
+      const ballPosition = this.$refs.ball.getBoundingClientRect();
+      const badgePosition = document
+        .getElementById("badge")
+        .getBoundingClientRect();
+      const xDistance = badgePosition.left - ballPosition.left;
+      const yDistance = badgePosition.top - ballPosition.top;
+
+      el.style.transform = `translate(${xDistance}px, ${yDistance}px)`;
+      el.style.transition = "all 0.7s cubic-bezier(.17,.67,.83,.67)";
+      done();
     },
-    afterEnter (el) {
-      this.showBall = !this.showBall
+    afterEnter(el) {
+      this.showBall = !this.showBall;
     },
-    getSelectedCount (val) {
-      this.selectedCount = val
+    getSelectedCount(val) {
+      this.selectedCount = val;
     }
   },
   components: { swiper, numberbox }
@@ -172,6 +182,5 @@ export default {
   z-index: 99;
   left: 170px;
   top: 387px;
-
 }
 </style>

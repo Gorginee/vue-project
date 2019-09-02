@@ -2,25 +2,22 @@
   <div>
     <div class="goods-container">
       <ul>
-        <li v-for="item in [1, 2, 3, 4, 5, 1, 1, 1, 1, 1, 1, 1, 1]" :key="item.index" @click="goInfoPage(item)">
+        <li v-for="item in goodslist" :key="item.id" @click="goInfoPage(item.id)">
           <div>
             <div class="goods-main-box">
-            <img
-              src="https://cdn.cnbj1.fds.api.mi-img.com/mi-mall/13c41ccd1bd8b38f9017c6faf569fb24.jpg?thumb=1&w=200&h=200&f=webp&q=90"
-              alt
-            />
-            <p>Redmi note 8 pro</p>
-          </div>
-          <div class="goods-info-box">
-            <div class="price-box">
-              <span>￥2199</span>
-              <s>￥2999</s>
+              <img :src="item.img"/>
+              <p>{{ item.title }}</p>
             </div>
-            <p>
-              <span>热卖中</span>
-              <span>库存88件</span>
-            </p>
-          </div>
+            <div class="goods-info-box">
+              <div class="price-box">
+                <span>{{ item.price }}</span>
+                <s>{{ item.mPrice }}</s>
+              </div>
+              <p>
+                <span>热卖中</span>
+                <span>库存{{ item.storage }}件</span>
+              </p>
+            </div>
           </div>
         </li>
       </ul>
@@ -32,14 +29,14 @@
 
 <script>
 export default {
-  data () {
+  data() {
     return {
-
-    }
+      goodslist: this.$store.state.goodslist
+    };
   },
   methods: {
-    goInfoPage (item){
-      this.$router.push('/goodsinfo/' + item)
+    goInfoPage(goodsId) {
+      this.$router.push("/goodsinfo/" + goodsId);
     }
   }
 };
@@ -56,7 +53,7 @@ export default {
     list-style: none;
     background-color: #eee;
     li {
-      box-shadow: 3px 3px 1px #e1e1e1;;
+      box-shadow: 3px 3px 1px #e1e1e1;
       margin: 3px 5px;
       .goods-main-box {
         p {
@@ -82,14 +79,12 @@ export default {
           s {
             font-size: 13px;
             color: #444;
-            
           }
-          
         }
         p {
-            display: flex;
-            justify-content: space-between;
-          }
+          display: flex;
+          justify-content: space-between;
+        }
       }
     }
   }
